@@ -1,0 +1,354 @@
+.onClick{
+	background: none;
+	border: none;
+	margin: 0;
+	padding: 0;
+}
+.onClick::after {
+	content: none;
+}
+
+.nowrap{
+	white-space: nowrap;
+}
+
+.margin-0 {
+	margin: 0 ;
+}
+
+.padding-0 {
+	padding: 0 ;
+}
+
+.scroll-x{
+	white-space: nowrap;
+	width: 100%;
+}
+
+.pa {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.absolute {
+	position: absolute;
+}
+
+.absolute-center{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+}
+
+.width-100,.width-1 {
+	width: 100%;
+}
+
+.width-2 {
+	width: 50% ;
+}
+
+.width-3 {
+	width: 33.333333% ;
+}
+
+.width-4 {
+	width: 25% ;
+}
+
+.width-5{
+	width: 20% ;
+}
+
+.width-6 {
+	width: 16.666666% ;
+}
+
+.width-7 {
+	width: 14.285714% ;
+}
+
+.width-8 {
+	width: 12.5% ;
+}
+
+.height-100 {
+	height: 100%;
+}
+
+.sticky {
+	position: sticky;
+	top: 0px;
+	z-index: 299;
+}
+
+.slide {
+	width: 100%;
+	flex: 1;
+	overflow: auto;
+}
+
+.width-flex-1 {
+	width: 100%;
+	flex: 1;
+}
+
+.bac-E2E1D9 {
+	background: #E2E1D9;
+}
+
+.bac-F5F2E9 {
+	background: #F5F2E9;
+}
+
+.bac-616D70 {
+	background: #616D70;
+}
+
+.bac-D0D1CB {
+	background: #D0D1CB;
+}
+
+.bac-D0D2CB {
+	background: #D0D2CB;
+}
+.bac-D8D8D8 {
+	background: #D8D8D8;
+}
+.bac-34454C{
+	background: #34454C;
+}
+.border-bottom {
+	border-bottom: 2rpx solid #F5F2E9;
+}
+
+.border-bottom2 {
+	border-bottom: 2rpx solid #D8D8D8;
+}
+
+.border-bottom3 {
+	border-bottom: 2rpx solid #616D70;
+}
+
+.border-bottom4 {
+	border-bottom: 2rpx solid #888888;
+}
+
+.border-bottom-D0D1CB {
+	border-bottom: 2rpx solid #D0D1CB;
+}
+
+.radius-top-10rpx {
+	border-radius: 10rpx 10rpx 0rpx 0rpx;
+}
+
+.radius-bottom-10rpx {
+	border-radius: 0rpx 0rpx 10rpx 10rpx;
+}
+
+.radius-10px,
+.radius-10 {
+	border-radius: 10rpx;
+}
+
+.radius-14px,
+.radius-14 {
+	border-radius: 14rpx;
+}
+
+.radius-16px,
+.radius-16 {
+	border-radius: 16rpx;
+}
+
+.radius-20px,
+.radius-20 {
+	border-radius: 20rpx;
+}
+
+.fixed,.popu{
+	position: fixed;
+	z-index: 2999;
+	top: 0;
+	left: 0;
+}
+
+.height-y-auto {
+	height: 100%;
+	overflow-y: auto;
+}
+
+.overflow-hidden,
+.hidden {
+	overflow: hidden;
+}
+
+.overflow-y-auto,
+.y-auto {
+	overflow-y: auto;
+}
+
+.x-auto {
+	overflow-x: auto;
+}
+
+.animation-scroll {
+	transition-property: transform, color;
+	transition-duration: 0.3s;
+	transition-timing-function: ease-in-out;
+}
+
+.opacity-1 {
+	opacity: 1;
+}
+
+.opacity-0 {
+	opacity: 0;
+}
+
+.font-size-16 {
+	font-size: 16rpx;
+}
+
+.flex-col {
+	display: flex;
+	flex-direction: column;
+}
+
+.flex-row {
+	display: flex;
+	flex-direction: row;
+}
+
+.flex-row-reverse {
+	display: flex;
+	flex-direction: row-reverse;
+}
+
+.justify-start {
+	display: flex;
+	justify-content: flex-start;
+}
+
+.justify-center {
+	display: flex;
+	justify-content: center;
+}
+
+.justify-end {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.justify-evenly {
+	display: flex;
+	justify-content: space-evenly;
+}
+
+.justify-around {
+	display: flex;
+	justify-content: space-around;
+}
+
+.justify-between {
+	display: flex;
+	justify-content: space-between;
+}
+
+.align-start {
+	display: flex;
+	align-items: flex-start;
+}
+
+.align-center {
+	display: flex;
+	align-items: center;
+}
+
+.align-end {
+	display: flex;
+	align-items: flex-end;
+}
+
+.align-baseline {
+	display: flex;
+	align-items: baseline;
+}
+
+.flex-1 {
+	flex: 1;
+}
+
+.flex-wrap {
+	display: flex;
+	flex-wrap: wrap
+}
+
+.flex-nowrap {
+	display: flex;
+	flex-wrap: nowrap
+}
+
+.text-exceed-ellipsis{
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.text-MultiLine-exceed-ellipsis{
+	overflow:hidden;
+	text-overflow: ellipsis;
+	-webkit-line-clamp: 1;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+}
+
+.text-wrap{
+	word-wrap: break-word;
+	word-break: break-all;
+	text-align: left;
+}
+
+.icon-round {
+	width: 36rpx;
+	height: 36rpx;
+	border: 4rpx solid #616D70;
+	border-radius: 50%;
+}
+.text-tenter{
+	width: 100%;
+	text-align: center ;
+	margin: 0 auto;
+}
+.buttonAggregate {
+	display: flex;
+	flex-wrap: wrap;
+	.el-button{
+		margin-left: 0;
+		margin-right: 12px;
+	}
+}
+.buttonText{
+	height: fit-content;
+	width: fit-content;
+	font-family: PingFang SC;
+	font-size: 24rpx;
+	font-weight: 500;
+	line-height: 40rpx;
+	letter-spacing: 0em;
+	color: #F5F2E9;
+	background: #87AC7F;
+	padding: 0 12rpx;
+	margin: 0;
+}
+.buttonText::after{
+	content:none
+}
+.el-card-tabel{
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}

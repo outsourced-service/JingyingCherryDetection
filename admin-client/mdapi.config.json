@@ -1,0 +1,19 @@
+{
+    "name": "鉴定后台管理系统",
+    "callback_url": "https://zion-app.functorz.com/zero/GQAnbZeMAeq/callback/4a7b18a7-2392-4dfc-a48c-544bd7e5810d",
+    "url": "https://zion-app.functorz.com/zero/GQAnbZeMAeq/api/graphql-v2",
+    "headers": {
+        "authorization": ""
+    },
+    "actionflow_id": "6a5fb3d9-e3e0-4d5e-b11c-f6a939d2d1bb",
+    "actionflow_version": 2,
+    "client_data": {
+        "actionflow_pwd": "",
+        "token": "",
+        "is_binlog": true,
+        "is_errlog": true
+    },
+    "env": "H5",
+    "server_port": 3020,
+    "server_root": "http://localhost"
+}
