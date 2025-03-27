@@ -255,6 +255,20 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 				roles: ['admin', 'common'],
 				icon: 'ele-WalletFilled',
 			},
+		},{
+			path: '/dashboard',
+			name: 'dashboard',
+			component: () => import('/@/views/dashboard/index.vue'),
+			meta: {
+				title: '数据看板',
+				isLink: '',
+				isHide: false,
+				isKeepAlive: true,
+				isAffix: false,
+				isIframe: false,
+				roles: ['admin', 'common'],
+				icon: 'ele-Monitor',
+			},
 		}],
 	},
 ];
