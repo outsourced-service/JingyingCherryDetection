@@ -81,12 +81,12 @@
         </el-col>
       </el-row>
     </div>
-  </div>
-</template>
-
-<script setup lang="ts">
+    </div>
+  </template>
+  
+  <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
-import { dashboard } from '/@/api/index';
+import { dashboard } from '/@/api/dashboard';
 import * as echarts from 'echarts';
 
 const dashboardFun = dashboard();
@@ -130,6 +130,19 @@ const orderChartData = ref({
   lastMonth: []
 });
 
+// 数据加载状态
+const userDataLoaded = ref({
+  yesterday: false,
+  lastWeek: false,
+  lastMonth: false
+});
+
+const orderDataLoaded = ref({
+  yesterday: false,
+  lastWeek: false,
+  lastMonth: false
+});
+
 // 初始化图表
 const initCharts = () => {
   if (userChartRef.value) {
@@ -151,14 +164,29 @@ const initCharts = () => {
 };
 
 // 更新用户图表
-const updateUserChart = () => {
+const updateUserChart = async () => {
   if (!userChart) return;
+  
+  // 如果选择的时间范围数据还未加载，则加载数据
+  if (!userDataLoaded.value[userChartTimeRange.value]) {
+    try {
+      if (userChartTimeRange.value === 'lastWeek') {
+        userChartData.value.lastWeek = await dashboardFun.getUserLastWeekData();
+      } else if (userChartTimeRange.value === 'lastMonth') {
+        userChartData.value.lastMonth = await dashboardFun.getUserLastMonthData();
+      }
+      userDataLoaded.value[userChartTimeRange.value] = true;
+    } catch (error) {
+      console.error('Error loading user data:', error);
+      return;
+    }
+  }
   
   const data = userChartData.value[userChartTimeRange.value];
   
   const option = {
     title: {
-      text: '新增用户'
+      text: '用户增长趋势'
     },
     tooltip: {
       trigger: 'axis'
@@ -186,14 +214,29 @@ const updateUserChart = () => {
 };
 
 // 更新订单图表
-const updateOrderChart = () => {
+const updateOrderChart = async () => {
   if (!orderChart) return;
+  
+  // 如果选择的时间范围数据还未加载，则加载数据
+  if (!orderDataLoaded.value[orderChartTimeRange.value]) {
+    try {
+      if (orderChartTimeRange.value === 'lastWeek') {
+        orderChartData.value.lastWeek = await dashboardFun.getOrderLastWeekData();
+      } else if (orderChartTimeRange.value === 'lastMonth') {
+        orderChartData.value.lastMonth = await dashboardFun.getOrderLastMonthData();
+      }
+      orderDataLoaded.value[orderChartTimeRange.value] = true;
+    } catch (error) {
+      console.error('Error loading order data:', error);
+      return;
+    }
+  }
   
   const data = orderChartData.value[orderChartTimeRange.value];
   
   const option = {
     title: {
-      text: '订单金额'
+      text: '订单金额趋势'
     },
     tooltip: {
       trigger: 'axis',
@@ -231,194 +274,6 @@ const updateOrderChart = () => {
   orderChart.setOption(option);
 };
 
-// 处理用户数据，按时间段统计
-const processUserData = (users) => {
-  if (!users || !Array.isArray(users)) return;
-  
-  const now = new Date();
-  
-  // 设置今天的结束时间（23:59:59.999）
-  const todayEnd = new Date(now);
-  todayEnd.setHours(23, 59, 59, 999);
-  
-  // 设置昨天的开始时间（0:00:00）
-  const yesterday = new Date(now);
-  yesterday.setDate(yesterday.getDate() - 1);
-  yesterday.setHours(0, 0, 0, 0);
-  
-  // 设置昨天的结束时间（23:59:59.999）
-  const yesterdayEnd = new Date(yesterday);
-  yesterdayEnd.setHours(23, 59, 59, 999);
-  
-  // 昨日数据（按小时）
-  const yesterdayData = [];
-  for (let i = 0; i < 24; i++) {
-    const hour = i < 10 ? `0${i}` : `${i}`;
-    const startHour = new Date(yesterday);
-    startHour.setHours(i, 0, 0, 0);
-    
-    const endHour = new Date(yesterday);
-    endHour.setHours(i, 59, 59, 999);
-    
-    const count = users.filter(user => {
-      const createdAt = new Date(user.created_at);
-      return createdAt >= startHour && createdAt <= endHour;
-    }).length;
-    
-    yesterdayData.push({
-      date: `${hour}:00`,
-      count: count
-    });
-  }
-  
-  // 近一周数据（按天，包括今天）
-  const lastWeekData = [];
-  for (let i = 6; i >= 0; i--) {
-    const date = new Date(now);
-    date.setDate(date.getDate() - i);
-    date.setHours(0, 0, 0, 0);
-    
-    const endDate = new Date(date);
-    endDate.setHours(23, 59, 59, 999);
-    
-    const count = users.filter(user => {
-      const createdAt = new Date(user.created_at);
-      return createdAt >= date && createdAt <= endDate;
-    }).length;
-    
-    const dateStr = `${date.getMonth() + 1}/${date.getDate()}`;
-    lastWeekData.push({
-      date: dateStr,
-      count: count
-    });
-  }
-  
-  // 近一个月数据（按天，包括今天）
-  const lastMonthData = [];
-  for (let i = 29; i >= 0; i--) {
-    const date = new Date(now);
-    date.setDate(date.getDate() - i);
-    date.setHours(0, 0, 0, 0);
-    
-    const endDate = new Date(date);
-    endDate.setHours(23, 59, 59, 999);
-    
-    const count = users.filter(user => {
-      const createdAt = new Date(user.created_at);
-      return createdAt >= date && createdAt <= endDate;
-    }).length;
-    
-    const dateStr = `${date.getMonth() + 1}/${date.getDate()}`;
-    lastMonthData.push({
-      date: dateStr,
-      count: count
-    });
-  }
-  
-  userChartData.value = {
-    yesterday: yesterdayData,
-    lastWeek: lastWeekData,
-    lastMonth: lastMonthData
-  };
-};
-
-// 处理订单数据，按时间段统计
-const processOrderData = (orders) => {
-  if (!orders || !Array.isArray(orders)) return;
-  
-  const now = new Date();
-  
-  // 设置今天的结束时间（23:59:59.999）
-  const todayEnd = new Date(now);
-  todayEnd.setHours(23, 59, 59, 999);
-  
-  // 设置昨天的开始时间（0:00:00）
-  const yesterday = new Date(now);
-  yesterday.setDate(yesterday.getDate() - 1);
-  yesterday.setHours(0, 0, 0, 0);
-  
-  // 设置昨天的结束时间（23:59:59.999）
-  const yesterdayEnd = new Date(yesterday);
-  yesterdayEnd.setHours(23, 59, 59, 999);
-  
-  // 昨日数据（按小时）
-  const yesterdayData = [];
-  for (let i = 0; i < 24; i++) {
-    const hour = i < 10 ? `0${i}` : `${i}`;
-    const startHour = new Date(yesterday);
-    startHour.setHours(i, 0, 0, 0);
-    
-    const endHour = new Date(yesterday);
-    endHour.setHours(i, 59, 59, 999);
-    
-    const hourOrders = orders.filter(order => {
-      const createdAt = new Date(order.created_at);
-      return createdAt >= startHour && createdAt <= endHour;
-    });
-    
-    const amount = hourOrders.reduce((sum, order) => sum + (order.price || 0), 0);
-    
-    yesterdayData.push({
-      date: `${hour}:00`,
-      amount: amount
-    });
-  }
-  
-  // 近一周数据（按天，包括今天）
-  const lastWeekData = [];
-  for (let i = 6; i >= 0; i--) {
-    const date = new Date(now);
-    date.setDate(date.getDate() - i);
-    date.setHours(0, 0, 0, 0);
-    
-    const endDate = new Date(date);
-    endDate.setHours(23, 59, 59, 999);
-    
-    const dayOrders = orders.filter(order => {
-      const createdAt = new Date(order.created_at);
-      return createdAt >= date && createdAt <= endDate;
-    });
-    
-    const amount = dayOrders.reduce((sum, order) => sum + (order.price || 0), 0);
-    
-    const dateStr = `${date.getMonth() + 1}/${date.getDate()}`;
-    lastWeekData.push({
-      date: dateStr,
-      amount: amount
-    });
-  }
-  
-  // 近一个月数据（按天，包括今天）
-  const lastMonthData = [];
-  for (let i = 29; i >= 0; i--) {
-    const date = new Date(now);
-    date.setDate(date.getDate() - i);
-    date.setHours(0, 0, 0, 0);
-    
-    const endDate = new Date(date);
-    endDate.setHours(23, 59, 59, 999);
-    
-    const dayOrders = orders.filter(order => {
-      const createdAt = new Date(order.created_at);
-      return createdAt >= date && createdAt <= endDate;
-    });
-    
-    const amount = dayOrders.reduce((sum, order) => sum + (order.price || 0), 0);
-    
-    const dateStr = `${date.getMonth() + 1}/${date.getDate()}`;
-    lastMonthData.push({
-      date: dateStr,
-      amount: amount
-    });
-  }
-  
-  orderChartData.value = {
-    yesterday: yesterdayData,
-    lastWeek: lastWeekData,
-    lastMonth: lastMonthData
-  };
-};
-
 // 监听时间范围变化
 watch(userChartTimeRange, () => {
   updateUserChart();
@@ -430,45 +285,33 @@ watch(orderChartTimeRange, () => {
 
 onMounted(async () => {
   try {
-    // 获取用户统计数据
-    const userTotal = await dashboardFun.userTotal;
-    const userYesterday = await dashboardFun.userYesterday;
-    const userLastWeek = await dashboardFun.userLastWeek;
-    const userLastMonth = await dashboardFun.userLastMonth;
+    // 获取基础统计数据和昨日详细数据
+    const baseStats = await dashboardFun.getBaseStats();
     
+    console.log('Base stats:', baseStats);
+    
+    // 设置数字看板数据
     userStats.value = {
-      total: userTotal?.aggregate?.count || 0,
-      yesterday: userYesterday?.aggregate?.count || 0,
-      lastWeek: userLastWeek?.aggregate?.count || 0,
-      lastMonth: userLastMonth?.aggregate?.count || 0
+      total: baseStats.user.total,
+      yesterday: baseStats.user.yesterday.count,
+      lastWeek: baseStats.user.lastWeek.count,
+      lastMonth: baseStats.user.lastMonth.count
     };
-    
-    // 获取订单统计数据（注意：这里获取的金额单位是分）
-    const orderAmount = await dashboardFun.orderAmount;
-    const orderAmountYesterday = await dashboardFun.orderAmountYesterday;
-    const orderAmountLastWeek = await dashboardFun.orderAmountLastWeek;
-    const orderAmountLastMonth = await dashboardFun.orderAmountLastMonth;
     
     orderStats.value = {
-      total: orderAmount?.aggregate?.sum?.price || 0,
-      yesterday: orderAmountYesterday?.aggregate?.sum?.price || 0,
-      lastWeek: orderAmountLastWeek?.aggregate?.sum?.price || 0,
-      lastMonth: orderAmountLastMonth?.aggregate?.sum?.price || 0
+      total: baseStats.order.total.amount,
+      yesterday: baseStats.order.yesterday.amount,
+      lastWeek: baseStats.order.lastWeek.amount,
+      lastMonth: baseStats.order.lastMonth.amount
     };
     
-    console.log('User stats:', userStats.value);
-    console.log('Order stats:', orderStats.value);
+    // 设置昨日图表数据
+    userChartData.value.yesterday = baseStats.user.yesterday.data;
+    orderChartData.value.yesterday = baseStats.order.yesterday.data;
     
-    // 获取用户和订单列表数据
-    const userList = await dashboardFun.userList;
-    const orderList = await dashboardFun.orderList;
-    
-    console.log('User list:', userList);
-    console.log('Order list:', orderList);
-    
-    // 处理数据生成图表数据
-    processUserData(userList);
-    processOrderData(orderList);
+    // 标记昨日数据已加载
+    userDataLoaded.value.yesterday = true;
+    orderDataLoaded.value.yesterday = true;
     
     // 初始化图表
     initCharts();
@@ -476,9 +319,9 @@ onMounted(async () => {
     console.error('Error fetching dashboard data:', error);
   }
 });
-</script>
-
-<style scoped>
+  </script>
+  
+  <style scoped>
 .dashboard-container {
   padding: 20px;
 }
@@ -533,4 +376,4 @@ onMounted(async () => {
   font-weight: 500;
   color: #303133;
 }
-</style>
+  </style>
